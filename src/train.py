@@ -1,6 +1,7 @@
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
 import random
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import os
