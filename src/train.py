@@ -69,8 +69,7 @@ class ProjectAgent:
         self.nb_actions = 4
         self.nb_observations = 6
         self.nb_neurons = 128
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = DQN(self.nb_observations, self.nb_actions,self.nb_neurons).to(device)
+        self.model = DQN(self.nb_observations, self.nb_actions,self.nb_neurons)
         device = "cuda" if next(self.model.parameters()).is_cuda else "cpu"
         self.memory = ReplayBuffer(config['buffer_size'], device)
         self.epsilon_max = config['epsilon_max']
