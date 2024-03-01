@@ -68,8 +68,9 @@ class ProjectAgent:
         self.batch_size = config['batch_size']
         self.nb_actions = 4
         self.nb_observations = 6
-        self.nb_neurons = 24
-        self.model = DQN(self.nb_observations, self.nb_actions,self.nb_neurons) 
+        self.nb_neurons = 128
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = DQN(self.nb_observations, self.nb_actions,self.nb_neurons).to(device)
         device = "cuda" if next(self.model.parameters()).is_cuda else "cpu"
         self.memory = ReplayBuffer(config['buffer_size'], device)
         self.epsilon_max = config['epsilon_max']
@@ -79,7 +80,7 @@ class ProjectAgent:
         self.epsilon_step = (self.epsilon_max-self.epsilon_min)/self.epsilon_stop
         self.criterion = torch.nn.MSELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config['learning_rate'])
-    
+
     def gradient_step(self):
         if len(self.memory) > self.batch_size:
             X, A, R, Y, D = self.memory.sample(self.batch_size)
@@ -90,8 +91,8 @@ class ProjectAgent:
             loss = self.criterion(QXA, update.unsqueeze(1))
             self.optimizer.zero_grad()
             loss.backward()
-            self.optimizer.step() 
-    
+            self.optimizer.step()
+
     def train(self, env, max_episode_length):
         episode_return = []
         episode = 0
@@ -126,9 +127,9 @@ class ProjectAgent:
             if current_episode_length >= max_episode_length:
                 episode += 1
                 print("Episode ", '{:3d}'.format(episode),
-                      ", episode_length ", current_episode_length, 
-                      ", epsilon ", '{:6.2f}'.format(epsilon), 
-                      ", batch size ", '{:5d}'.format(len(self.memory)), 
+                      ", episode_length ", current_episode_length,
+                      ", epsilon ", '{:6.2f}'.format(epsilon),
+                      ", batch size ", '{:5d}'.format(len(self.memory)),
                       ", episode return ", '{:4.1f}'.format(episode_cum_reward),
                       sep='')
                 state, _ = env.reset()
@@ -142,7 +143,7 @@ class ProjectAgent:
     def act(self, observation, use_random=False):
         if use_random:
             return env.action_space.sample()
-        
+
         return greedy_action(self.model, observation)
 
     def save(self, path):
@@ -150,12 +151,12 @@ class ProjectAgent:
         save_path = os.path.join('./', f'{path}.pt')
         torch.save({
             # 'episodes_return': returns,
-            'model_state_dict': agent.model.state_dict(),
-            'optimizer_state_dict': agent.optimizer.state_dict()
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict()
         }, save_path)
 
     def load(self):
-        model_path = "dqn_maxEpLen200_200ep_24neurons"
+        model_path = "dqn_maxEpLen500_200ep_128neurons"
         save_path = os.path.join('./', f'{model_path}.pt')
         checkpoint = torch.load(save_path)
         self.model.load_state_dict(checkpoint['model_state_dict'])
