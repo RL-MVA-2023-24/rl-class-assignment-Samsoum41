@@ -157,6 +157,6 @@ class ProjectAgent:
     def load(self):
         model_path = "dqn_maxEpLen500_200ep_128neurons"
         save_path = os.path.join('./', f'{model_path}.pt')
-        checkpoint = torch.load(save_path)
+        checkpoint = torch.load(save_path, map_location=torch.device('cpu'))
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
