@@ -4,6 +4,7 @@ import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 import os
 
 env = TimeLimit(
@@ -57,7 +58,7 @@ class ProjectAgent:
     def __init__(self):
         config = {
             'learning_rate': 0.001,
-            'gamma': 0.95,
+            'gamma': 0.98,
             'buffer_size': 1000000,
             'epsilon_min': 0.01,
             'epsilon_max': 1.,
@@ -130,7 +131,7 @@ class ProjectAgent:
                       ", epsilon ", '{:6.2f}'.format(epsilon),
                       ", batch size ", '{:5d}'.format(len(self.memory)),
                       ", episode return ", '{:4.1f}'.format(episode_cum_reward),
-                      sep='')
+                      sep='') 
                 state, _ = env.reset()
                 episode_return.append(episode_cum_reward)
                 episode_cum_reward = 0
