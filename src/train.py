@@ -37,9 +37,9 @@ class ProjectAgent:
 
     def save(self, path):
         # model_path = "dqn_maxEpLen200_200ep_24neurons"
-        save_path = os.path.join('./', f'../model/{path}.joblib')
+        save_path = os.path.join('../model', f'{path}.joblib')
         dump(self.Q, save_path)
     def load(self):
-        model_name = "Q_value_function_FQI_paper"
-        save_path = os.path.join('./', f'../model/{model_name}.joblib')
+        model_path = "Q_value_function_FQI_paper"
+        save_path = os.path.join('../model', f'{model_path}.joblib')
         self.Q = load(save_path)
