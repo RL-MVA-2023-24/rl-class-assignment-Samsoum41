@@ -40,6 +40,6 @@ class ProjectAgent:
         save_path = os.path.join('./model', f'{path}.joblib')
         dump(self.Q, save_path)
     def load(self):
-        model_path = "Q_value_function_FQI_RegTree"
+        model_path = "Q_value_function_FQI_HistGB"
         save_path = os.path.join('./model', f'{model_path}.joblib')
         self.Q = load(save_path)
